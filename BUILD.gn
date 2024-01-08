@@ -1467,6 +1467,47 @@ if (skia_enable_ganesh && skia_generate_workarounds) {
 
 import("gn/codec.gni")
 
+ckia_sources = [
+  "//ckia/src/gr_context.cpp",
+  "//ckia/src/sk_all.c",
+  "//ckia/src/sk_bitmap.cpp",
+  "//ckia/src/sk_canvas.cpp",
+  "//ckia/src/sk_codec.cpp",
+  "//ckia/src/sk_colorfilter.cpp",
+  "//ckia/src/sk_colorspace.cpp",
+  "//ckia/src/sk_data.cpp",
+  "//ckia/src/sk_document.cpp",
+  "//ckia/src/sk_drawable.cpp",
+  "//ckia/src/sk_enums.cpp",
+  "//ckia/src/sk_font.cpp",
+  "//ckia/src/sk_general.cpp",
+  "//ckia/src/sk_graphics.cpp",
+  "//ckia/src/sk_image.cpp",
+  "//ckia/src/sk_imagefilter.cpp",
+  "//ckia/src/sk_maskfilter.cpp",
+  "//ckia/src/sk_matrix.cpp",
+  "//ckia/src/sk_paint.cpp",
+  "//ckia/src/sk_path.cpp",
+  "//ckia/src/sk_patheffect.cpp",
+  "//ckia/src/sk_picture.cpp",
+  "//ckia/src/sk_pixmap.cpp",
+  "//ckia/src/sk_region.cpp",
+  "//ckia/src/sk_rrect.cpp",
+  "//ckia/src/sk_runtimeeffect.cpp",
+  "//ckia/src/sk_shader.cpp",
+  "//ckia/src/sk_stream.cpp",
+  "//ckia/src/sk_string.cpp",
+  "//ckia/src/sk_structs.cpp",
+  "//ckia/src/sk_surface.cpp",
+  "//ckia/src/sk_svg.cpp",
+  "//ckia/src/sk_textblob.cpp",
+  "//ckia/src/sk_typeface.cpp",
+  "//ckia/src/sk_types_priv.h",
+  "//ckia/src/sk_vertices.cpp",
+  "//ckia/src/skottie_animation.cpp",
+  "//ckia/src/sksg_invalidation_controller.cpp",
+]
+
 skia_component("skia") {
   public_configs = [ ":skia_public" ]
   configs = skia_library_configs
@@ -1528,6 +1569,7 @@ skia_component("skia") {
   sources += skia_codec_decode_bmp
   sources += skia_encode_srcs
   sources += skia_sksl_sources
+  sources += ckia_sources
   sources += [
     "src/android/SkAndroidFrameworkUtils.cpp",
     "src/android/SkAnimatedImage.cpp",
@@ -1547,6 +1589,7 @@ skia_component("skia") {
   defines = []
   libs = []
 
+  defines += [ "SKIAC_IMPL=1" ]
   if (skia_enable_sksl_tracing) {
     defines += [ "SKSL_ENABLE_TRACING" ]
     sources += skia_sksl_tracing_sources
