@@ -1,3 +1,61 @@
 Skia is a complete 2D graphic library for drawing Text, Geometries, and Images.
 
 See full details, and build instructions, at https://skia.org.
+
+This fork is basically the latest skia milestone + SkiaSharp's "C" bindings. 
+The primary usecase is `ckia_sys` crate, but because skia's git repo is huge (hundreds of MB), i decided to keep the crate separate from the skia source.
+
+To upgrade to a new milestone, just
+1. copy the following directories and install_files
+  1. `ckia` directory which contains skiasharp's stable ABI headers/sources.
+  2. this `README.md` file
+  3. `.gitub/workspaces` which checks if our changes build properly for different targets. 
+2. add the following to `BUILD.gn`.
+```gn
+// just above "skia_component("skia")" target declaration
+ckia_sources = [
+  "//ckia/src/gr_context.cpp",
+  "//ckia/src/sk_all.c",
+  "//ckia/src/sk_bitmap.cpp",
+  "//ckia/src/sk_canvas.cpp",
+  "//ckia/src/sk_codec.cpp",
+  "//ckia/src/sk_colorfilter.cpp",
+  "//ckia/src/sk_colorspace.cpp",
+  "//ckia/src/sk_data.cpp",
+  "//ckia/src/sk_document.cpp",
+  "//ckia/src/sk_drawable.cpp",
+  "//ckia/src/sk_enums.cpp",
+  "//ckia/src/sk_font.cpp",
+  "//ckia/src/sk_general.cpp",
+  "//ckia/src/sk_graphics.cpp",
+  "//ckia/src/sk_image.cpp",
+  "//ckia/src/sk_imagefilter.cpp",
+  "//ckia/src/sk_maskfilter.cpp",
+  "//ckia/src/sk_matrix.cpp",
+  "//ckia/src/sk_paint.cpp",
+  "//ckia/src/sk_path.cpp",
+  "//ckia/src/sk_patheffect.cpp",
+  "//ckia/src/sk_picture.cpp",
+  "//ckia/src/sk_pixmap.cpp",
+  "//ckia/src/sk_region.cpp",
+  "//ckia/src/sk_rrect.cpp",
+  "//ckia/src/sk_runtimeeffect.cpp",
+  "//ckia/src/sk_shader.cpp",
+  "//ckia/src/sk_stream.cpp",
+  "//ckia/src/sk_string.cpp",
+  "//ckia/src/sk_structs.cpp",
+  "//ckia/src/sk_surface.cpp",
+  "//ckia/src/sk_svg.cpp",
+  "//ckia/src/sk_textblob.cpp",
+  "//ckia/src/sk_typeface.cpp",
+  "//ckia/src/sk_types_priv.h",
+  "//ckia/src/sk_vertices.cpp",
+  "//ckia/src/skottie_animation.cpp",
+  "//ckia/src/sksg_invalidation_controller.cpp",
+]
+// inside skia_component("skia") declaration, where sources are being added, add this line
+  sources += ckia_sources
+// then, add this defines where other defines are added
+  defines += [ "SKIAC_IMPL=1" ]
+```
+3. copy this README too.
