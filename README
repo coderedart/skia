@@ -12,7 +12,44 @@ To upgrade to a new milestone, just do the follow:
   3. `.gitub/workspaces` which checks if our changes build properly for different targets. 
 2. add the following to `BUILD.gn`.
 ```gn
-// just above "skia_component("skia")" target declaration
+# just above "skia_component("skia")" target declaration
+ckia_public = [
+  "ckia/include/gr_context.h",
+  "ckia/include/sk_bitmap.h",
+  "ckia/include/sk_canvas.h",
+  "ckia/include/sk_codec.h",
+  "ckia/include/sk_colorfilter.h",
+  "ckia/include/sk_colorspace.h",
+  "ckia/include/sk_data.h",
+  "ckia/include/sk_document.h",
+  "ckia/include/sk_drawable.h",
+  "ckia/include/sk_font.h",
+  "ckia/include/sk_general.h",
+  "ckia/include/sk_graphics.h",
+  "ckia/include/sk_imagefilter.h",
+  "ckia/include/sk_image.h",
+  "ckia/include/sk_maskfilter.h",
+  "ckia/include/sk_matrix.h",
+  "ckia/include/skottie_animation.h",
+  "ckia/include/sk_paint.h",
+  "ckia/include/sk_patheffect.h",
+  "ckia/include/sk_path.h",
+  "ckia/include/sk_picture.h",
+  "ckia/include/sk_pixmap.h",
+  "ckia/include/sk_region.h",
+  "ckia/include/sk_rrect.h",
+  "ckia/include/sk_runtimeeffect.h",
+  "ckia/include/sksg_invalidation_controller.h",
+  "ckia/include/sk_shader.h",
+  "ckia/include/sk_stream.h",
+  "ckia/include/sk_string.h",
+  "ckia/include/sk_surface.h",
+  "ckia/include/sk_svg.h",
+  "ckia/include/sk_textblob.h",
+  "ckia/include/sk_typeface.h",
+  "ckia/include/sk_types.h",
+  "ckia/include/sk_vertices.h",
+]
 ckia_sources = [
   "//ckia/src/gr_context.cpp",
   "//ckia/src/sk_all.c",
@@ -53,8 +90,8 @@ ckia_sources = [
   "//ckia/src/skottie_animation.cpp",
   "//ckia/src/sksg_invalidation_controller.cpp",
 ]
-// inside skia_component("skia") declaration, where sources are being added, add this line
-  sources += ckia_sources
-// then, add this defines where other defines are added
-  defines += [ "SKIAC_IMPL=1" ]
+# inside skia_component("skia") declaration, add these to the relevant sections
+public += ckia_public  
+sources += ckia_sources
+defines += [ "SKIAC_IMPL=1" ]
 ```
