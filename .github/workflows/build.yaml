@@ -18,12 +18,10 @@ jobs:
       - name: Check LLVM version
         if: matrix.os == 'windows'
         shell: bash
-        run: ls C:/Program\ Files/LLVM
-        
+        run: ls C:/Program\ Files/LLVM/lib/clang
+
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          submodules: 'recursive'
         
       - name: Run sccache-cache # to speedup skia compilation
         uses: mozilla-actions/sccache-action@v0.0.3
@@ -61,7 +59,7 @@ jobs:
           ninja -C out
           ls out
       
-      - name: Build Debug
+      - name: Build Debug Mac # mac needs to skip vulkan, so its a separate build step
         shell: bash
         if: matrix.os == 'macos'
         run: |
@@ -70,7 +68,7 @@ jobs:
           ninja -C out
           ls out
         
-      - name: Build Release
+      - name: Build Release Mac
         shell: bash
         if: matrix.os == 'macos'
         run: |
