@@ -103,9 +103,9 @@ sk_stream_asset_t* sk_typeface_open_stream(const sk_typeface_t* typeface, int* t
 sk_fontmgr_t* sk_fontmgr_create_custom_dir(const char * dir) {
     return ToFontMgr(SkFontMgr_New_Custom_Directory(dir).release());
 }
-// datas: pointer to a slice of pointers, each of which is a sk_sp<SkData>
-sk_fontmgr_t* sk_fontmgr_create_custom_data(const sk_data_t** datas, size_t datas_count) {
-    return ToFontMgr(SkFontMgr_New_Custom_Data(SkSpan(reinterpret_cast<const SkData**>(datas), datas_count)).release());
+// datas: pointer to a slice of sk_sp<SkData>(sk_sp is itself a pointer ofc). i.e. a slice of SkDatas
+sk_fontmgr_t* sk_fontmgr_create_custom_data(sk_data_t** datas, size_t datas_count) {
+    return ToFontMgr(SkFontMgr_New_Custom_Data(SkSpan(reinterpret_cast<sk_sp<SkData>*>(datas), datas_count)).release());
 }
 
 sk_fontmgr_t* sk_fontmgr_ref_empty() {
