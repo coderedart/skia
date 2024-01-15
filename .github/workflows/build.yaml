@@ -58,7 +58,7 @@ jobs:
       
       - name: Build Debug
         shell: bash
-        if: matrix.os != 'macos'
+        if: matrix.os == 'macos'
         run: |
           ./bin/gn gen out --args="is_official_build=false $FULL_ARGS"
           ./bin/gn args --list --short out
@@ -67,7 +67,7 @@ jobs:
         
       - name: Build Release
         shell: bash
-        if: matrix.os != 'macos'
+        if: matrix.os == 'macos'
         run: |
           ./bin/gn gen out --args="is_official_build=true $FULL_ARGS"
           ./bin/gn args --list --short out
