@@ -47,6 +47,7 @@ jobs:
         run: |
           ./bin/gn gen out --args="is_official_build=false skia_use_vulkan=true $FULL_ARGS"
           ./bin/gn args --list --short out
+          ./bin/gn desc out :skia
           ninja -C out
           ls out
       
@@ -56,6 +57,7 @@ jobs:
         run: |
           ./bin/gn gen out --args="is_official_build=true skia_use_vulkan=true $FULL_ARGS"
           ./bin/gn args --list --short out
+          ./bin/gn desc out :skia
           ninja -C out
           ls out
       
@@ -65,6 +67,7 @@ jobs:
         run: |
           ./bin/gn gen out --args="is_official_build=false $FULL_ARGS"
           ./bin/gn args --list --short out
+          ./bin/gn desc out :skia
           ninja -C out
           ls out
         
@@ -74,5 +77,6 @@ jobs:
         run: |
           ./bin/gn gen out --args="is_official_build=true $FULL_ARGS"
           ./bin/gn args --list --short out
+          ./bin/gn desc out :skia
           ninja -C out
           ls out
