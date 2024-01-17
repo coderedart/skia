@@ -1,7 +1,6 @@
 #!/bin/python
 
-sources_to_remove = """
-./site
+sources_to_remove = """./site
 ./resources/images
 ./resources/fonts
 ./resources/sksl
@@ -31,8 +30,7 @@ sources_to_remove = """
 ./tools/gpu
 ./tools/viewer
 ./tools/fonts
-./tools/perf-canvaskit-puppeteer
-"""
+./tools/perf-canvaskit-puppeteer"""
 from pathlib import Path
 import shutil
 
@@ -41,4 +39,6 @@ canvaskit_gni_path = Path('./modules/canvaskit/canvaskit.gni')
 canvaskit_gni_contents = canvaskit_gni_path.read_text()
 for line in sources_to_remove.splitlines():
     shutil.rmtree(line)
+
+canvaskit_gni_path.parent.mkdir(parents=True, exist_ok=True)
 canvaskit_gni_path.write_text(canvaskit_gni_contents)
