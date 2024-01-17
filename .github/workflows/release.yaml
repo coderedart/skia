@@ -1,0 +1,28 @@
+on:
+    push:
+      tags:
+        - "ckia_*"
+name: Binaries Release
+env:
+  CARGO_INCREMENTAL: 0
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Remove Useless Sources
+        run: python ckia/rm_useless_src.py
+
+      - name: Package Sources
+        run: tar --exclude='./.git' -czvf src.tar.gz .
+
+      - name: Upload Assets
+        uses: xresloader/upload-to-github-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tags: true
+          draft: true
+          file: "*.tar.gz"
