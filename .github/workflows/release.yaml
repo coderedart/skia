@@ -16,7 +16,10 @@ jobs:
         run: python ckia/rm_useless_src.py
 
       - name: Package Sources
-        run: tar --exclude='./.git' -czvf src.tar.gz .
+        shell: bash
+        run: |
+            mkdir out
+            tar --exclude='./.git' --exclude='./out' -czvf ./out/src.tar.gz .
 
       - name: Upload Assets
         uses: xresloader/upload-to-github-release@v1
@@ -25,4 +28,4 @@ jobs:
         with:
           tags: true
           draft: true
-          file: "*.tar.gz"
+          file: "./out/src.tar.gz"
