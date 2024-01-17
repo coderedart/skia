@@ -41,6 +41,9 @@ jobs:
           GIT_SYNC_DEPS_SKIP_EMSDK: True
         run: python tools/git-sync-deps
       
+      - name: Remove Useless Sources
+        run: python ckia/rm_useless_src.py
+        
       - name: Build Debug
         shell: bash
         if: matrix.os != 'macos'
