@@ -69,6 +69,6 @@ jobs:
         uses: actions/upload-artifact@v4
         if: matrix.profile == 'release'
         with:
-          name: ${{matrix.libtype}}_${{matrix.config.triple}}
+          name: ${{matrix.libtype}}-${{matrix.os}}.zip
           retention-days: 7
           path: 'out/*.tar.gz'
