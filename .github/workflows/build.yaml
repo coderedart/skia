@@ -94,18 +94,14 @@ jobs:
       matrix:
         os: [ubuntu, windows, macos]
         arch: [x86_64, arm64]
-        target_os: [self, android, ios]
+        target_os: [self, android]
         is_official_build: [true, false]
         is_component_build: [true, false]
         exclude:
-          - os: ubuntu
-            target_os: ios
-          - os: windows
-            target_os: ios
-          - target_os: ios
+          - target_os: android # desktop android? who cares
             arch: x86_64
-          - target_os: android
-            arch: x86_64
+          - os: macos # i don't have apple hardware to test, so i will skip this risky config
+            target_os: android
     env:
       USE_VULKAN: ${{(matrix.os != 'macos' || matrix.target_os == 'android') && 'skia_use_vulkan=true' || 'skia_use_vulkan=false'}}
       IS_OFFICIAL_BUILD: is_official_build=${{matrix.is_official_build && 'true' || 'false'}}
