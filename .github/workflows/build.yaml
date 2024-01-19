@@ -45,7 +45,7 @@ jobs:
             config:
               - triple: x86_64-pc-windows-msvc
                 os: windows
-                args: 'extra_cflags+=["-DSK_FONT_HOST_USE_SYSTEM_SETTINGS"]
+                args: 'extra_cflags+=["-DSK_FONT_HOST_USE_SYSTEM_SETTINGS"]'
 
     steps:
       - name: Checkout
