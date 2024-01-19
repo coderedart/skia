@@ -104,6 +104,10 @@ jobs:
             target_os: android
           - os: ubuntu
             arch: arm64 # softfp abi error with linux arm
+          - os: windows # windows arm is only experimentally supported. 
+            arch: arm64
+          - profile: debug # lets avoid debug info when building shared libs. windows has some dll import/export error
+            libtype: shared
           
     env:
       USE_VULKAN: ${{(matrix.os != 'macos' || matrix.target_os == 'android') && 'skia_use_vulkan=true' || 'skia_use_vulkan=false'}}
