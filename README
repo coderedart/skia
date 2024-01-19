@@ -10,7 +10,17 @@ To upgrade to a new milestone, just do the follow:
   1. `ckia` directory which contains skiasharp's stable ABI headers/sources.
   2. this `README.md` file
   3. `.gitub/workspaces` which checks if our changes build properly for different targets. 
-2. add the following to `BUILD.gn`.
+2. Add the following to `third_party/icu/SkLoadIcu.h` and `third_party/icu/SkLoadIcu.cpp`
+  1. `SkLoadIcu.h`: 
+    1. `bool SkLoadICUMemory(void*);` inside win32 def
+    2. `static inline bool SkLoadICUMemory(void*) { return true; }` outside win32 def
+  2. `SkLoadIcu.cpp`: 
+  ```
+  bool sk_icu_set_icudtl_dat(void* icudtl_dat) {
+    return SkLoadICUMemory(icudtl_dat);
+  }
+  ```
+3. add the following to `BUILD.gn`.
 ```gn
 # just above "skia_component("skia")" target declaration
 ckia_public = [

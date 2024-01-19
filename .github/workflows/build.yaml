@@ -41,6 +41,9 @@ jobs:
         exclude:
           - profile: debug # lets avoid debug info when building shared libs. windows has some dll import/export error
             libtype: shared
+          - libtype: shared # shared libs on windows has some error with dll import/export in skottie
+            config:
+              - os: windows
     steps:
       - name: Checkout
         uses: actions/checkout@v4

@@ -67,6 +67,7 @@ static bool init_icu(void* addr) {
     }
     return true;
 }
+static inline bool SkLoadICUMemory(void* icudtl) { return init_icu(icudtl); }
 
 static std::wstring get_module_path(HMODULE module) {
     DWORD len;

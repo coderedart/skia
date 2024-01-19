@@ -72,6 +72,8 @@ SK_C_API void sk_fontstyleset_get_style(sk_fontstyleset_t* fss, int index, sk_fo
 SK_C_API sk_typeface_t* sk_fontstyleset_create_typeface(sk_fontstyleset_t* fss, int index);
 SK_C_API sk_typeface_t* sk_fontstyleset_match_style(sk_fontstyleset_t* fss, sk_fontstyle_t* style);
 
+// icu
+SK_C_API bool sk_icu_set_icudtl_dat(void*);
 SK_C_PLUS_PLUS_END_GUARD
 
 #endif

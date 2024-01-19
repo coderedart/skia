@@ -13,7 +13,7 @@
 #include "include/core/SkStream.h"
 #include "include/ports/SkFontMgr_directory.h"
 #include "include/ports/SkFontMgr_data.h"
-
+#include "third_party/icu/SkLoadICU.h"
 #include <memory>
 
 #include "ckia/include/sk_typeface.h"
@@ -205,4 +205,8 @@ sk_typeface_t* sk_fontstyleset_create_typeface(sk_fontstyleset_t* fss, int index
 
 sk_typeface_t* sk_fontstyleset_match_style(sk_fontstyleset_t* fss, sk_fontstyle_t* style) {
     return ToTypeface(AsFontStyleSet(fss)->matchStyle(*AsFontStyle(style)).release());
+}
+
+bool sk_icu_set_icudtl_dat(void* icudtl_dat) {
+    return SkLoadICUMemory(icudtl_dat);
 }
