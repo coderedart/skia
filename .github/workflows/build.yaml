@@ -5,15 +5,21 @@ on:
 
 name: Build
 env:
-  CARGO_INCREMENTAL: 0
+  FULL_ARGS: 'skia_enable_tools=false cc="clang" cc_wrapper="sccache" cxx="clang++" clang_win="C:\\Program Files\\LLVM" clang_win_version="16" skia_use_system_expat=false skia_use_system_freetype2=false skia_use_system_harfbuzz=false skia_use_system_icu=false skia_use_system_libjpeg_turbo=false skia_use_system_libpng=false skia_use_system_libwebp=false skia_use_system_zlib=false'
+
 jobs:
-  build:
+  build_host:
     runs-on: ${{ matrix.os }}-latest
     strategy:
       matrix:
         os: [ubuntu, windows, macos]
+        is_official_build: [true, false]
+        is_component_build: [true, false]
     env:
-      FULL_ARGS: 'skia_enable_tools=false cc="clang" cc_wrapper="sccache" cxx="clang++" clang_win="C:\\Program Files\\LLVM" clang_win_version="16" skia_use_system_expat=false skia_use_system_freetype2=false skia_use_system_harfbuzz=false skia_use_system_icu=false skia_use_system_libjpeg_turbo=false skia_use_system_libpng=false skia_use_system_libwebp=false skia_use_system_zlib=false'
+      USE_VULKAN: ${{matrix.os != 'macos' && 'skia_use_vulkan=true' || 'skia_use_vulkan=false'}}
+      IS_OFFICIAL_BUILD: is_official_build=${{matrix.is_official_build && 'true' || 'false'}}
+      IS_COMPONENT_BUILD: is_component_build=${{matrix.is_component_build && 'true' || 'false'}}
+      TARGET: ${{matrix.os == 'ubuntu' && 'x86_64-unknown-linux-gnu' || (matrix.os == 'macos' && 'x86_64-apple-darwin' || 'x86_64-pc-windows-msvc')}}
     steps:
       - name: Check LLVM version
         if: matrix.os == 'windows'
@@ -28,58 +34,21 @@ jobs:
         
       - name: Install Ninja
         uses: seanmiddleditch/gha-setup-ninja@master
-          
-      - name: Install Deps on Linux
-        shell: bash
-        if: matrix.os == 'ubuntu'
-        run: ./tools/install_dependencies.sh --yes
       
-      - name: Git Sync Deps
+      - name: Cache ThirdParty dirs
+        uses: actions/cache@v3
+        with:
+          path: './third_party/externals'
+          key: ${{hashFiles('./DEPS')}}
+          enableCrossOsArchive: True
+
+      - name: Build and Archive Libs
         shell: bash
-        env: 
-          GIT_SYNC_DEPS_SHALLOW_CLONE : True
-          GIT_SYNC_DEPS_SKIP_EMSDK: True
-        run: python tools/git-sync-deps
+        run: bash ./ckia/build_skia.sh
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          path: 'out/*.tar.gz'
       
-      - name: Remove Useless Sources
-        run: python ckia/rm_useless_src.py
-        
-      - name: Build Debug
-        shell: bash
-        if: matrix.os != 'macos'
-        run: |
-          ./bin/gn gen out --args="is_official_build=false skia_use_vulkan=true $FULL_ARGS"
-          ./bin/gn args --list --short out
-          ./bin/gn desc out :skia
-          ninja -C out
-          ls out
       
-      - name: Build Release
-        shell: bash
-        if: matrix.os != 'macos'
-        run: |
-          ./bin/gn gen out --args="is_official_build=true skia_use_vulkan=true $FULL_ARGS"
-          ./bin/gn args --list --short out
-          ./bin/gn desc out :skia
-          ninja -C out
-          ls out
-      
-      - name: Build Debug Mac # mac needs to skip vulkan, so its a separate build step
-        shell: bash
-        if: matrix.os == 'macos'
-        run: |
-          ./bin/gn gen out --args="is_official_build=false $FULL_ARGS"
-          ./bin/gn args --list --short out
-          ./bin/gn desc out :skia
-          ninja -C out
-          ls out
-        
-      - name: Build Release Mac
-        shell: bash
-        if: matrix.os == 'macos'
-        run: |
-          ./bin/gn gen out --args="is_official_build=true $FULL_ARGS"
-          ./bin/gn args --list --short out
-          ./bin/gn desc out :skia
-          ninja -C out
-          ls out
