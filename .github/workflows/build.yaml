@@ -26,26 +26,15 @@ env:
     extra_asmflags=[] extra_cflags=[] extra_cflags_c=[] extra_cflags_cc=[] extra_ldflags=[]
 jobs:
   build:
-    runs-on: ${{ matrix.config.os }}-latest
+    runs-on: ${{ matrix.os }}-latest
     strategy:
       matrix:
         profile: [release, debug]
         libtype: [static, shared]
-        config:
-          - triple: x86_64-unknown-linux-gnu
-            os: ubuntu
-            args: 'skia_use_egl=true extra_cflags_cc+=["-frtti"]'
-          - triple: x86_64-pc-windows-msvc
-            os: windows
-            args: 'extra_cflags+=["-DSK_FONT_HOST_USE_SYSTEM_SETTINGS"]'
+        os: [ubuntu, windows]
         exclude:
-          - profile: debug # lets avoid debug info when building shared libs. windows has some dll import/export error
-            libtype: shared
           - libtype: shared # shared libs on windows has some error with dll import/export in skottie
-            config:
-              - triple: x86_64-pc-windows-msvc
-                os: windows
-                args: 'extra_cflags+=["-DSK_FONT_HOST_USE_SYSTEM_SETTINGS"]'
+            os: windows
 
     steps:
       - name: Checkout
@@ -58,7 +47,7 @@ jobs:
         uses: seanmiddleditch/gha-setup-ninja@master
       
       - name: Install Deps on Linux
-        if: matrix.config.os == 'ubuntu'
+        if: matrix.os == 'ubuntu'
         shell: bash
         run: ./tools/install_dependencies.sh
 
@@ -68,9 +57,10 @@ jobs:
       - name: Build and Archive Libs
         shell: bash
         env:
-          TARGET: ${{matrix.config.triple}}
-          TARGET_ARGS: ${{matrix.config.args}}
-          USE_VULKAN: ${{matrix.config.os != 'macos' && 'skia_use_vulkan=true' || 'skia_use_vulkan=false'}}
+          args: 
+          TARGET: ${{matrix.os == 'ubuntu' && 'x86_64-unknown-linux-gnu' || 'x86_64-pc-windows-msvc' }}
+          TARGET_ARGS: ${{matrix.os == 'ubuntu' && 'skia_use_egl=true extra_cflags_cc+=["-frtti"]' || 'extra_cflags+=["-DSK_FONT_HOST_USE_SYSTEM_SETTINGS"]'}}
+          USE_VULKAN: 'skia_use_vulkan=true'
           IS_OFFICIAL_BUILD: is_official_build=${{matrix.profile == 'release' && 'true' || 'false'}}
           IS_COMPONENT_BUILD: is_component_build=${{matrix.libtype == 'shared' && 'true' || 'false'}}
         run: bash ./ckia/build_skia.sh
