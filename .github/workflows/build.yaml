@@ -5,21 +5,112 @@ on:
 
 name: Build
 env:
-  FULL_ARGS: 'skia_enable_tools=false cc="clang" cc_wrapper="sccache" cxx="clang++" clang_win="C:\\Program Files\\LLVM" clang_win_version="16" skia_use_system_expat=false skia_use_system_freetype2=false skia_use_system_harfbuzz=false skia_use_system_icu=false skia_use_system_libjpeg_turbo=false skia_use_system_libpng=false skia_use_system_libwebp=false skia_use_system_zlib=false'
-
+  build_info: >
+    {
+      "android": {
+        "ubuntu": {
+          "arm64": {
+            "triple": "ubuntu_aarch64-linux-android",
+            "target_os": "android",
+            "target_arch": "arm64",
+            "args": ""
+          }
+        },
+        "windows": {
+          "arm64": {
+            "triple": "windows_aarch64-linux-android",
+            "target_os": "android",
+            "target_arch": "arm64",
+            "args": ""
+          }
+        },
+        "macos": {
+          "arm64": {
+            "triple": "macos_aarch64-linux-android",
+            "target_os": "android",
+            "target_arch": "arm64",
+            "args": ""
+          }
+        }
+      },
+      "ios": {
+        "macos": {
+          "arm64": {
+            "triple": "macos_aarch64-apple-ios",
+            "target_os": "ios",
+            "target_arch": "arm64"
+          }
+        }
+      },
+      "self": {
+        "ubuntu": {
+          "arm64": {
+            "triple": "aarch64-unknown-linux-gnu",
+            "target_os": "",
+            "target_arch": "arm64",
+            "args": "skia_use_egl=true extra_cflags_cc+=[\"-frtti\"]"
+          },
+          "x86_64": {
+            "triple": "x86_64-unknown-linux-gnu",
+            "target_os": "",
+            "target_arch": "x86_64",
+            "args": "skia_use_egl=true extra_cflags_cc+=[\"-frtti\"]"
+          }
+        },
+        "windows": {
+          "arm64": {
+            "triple": "aarch64-pc-windows-msvc",
+            "target_os": "",
+            "target_arch": "arm64",
+            "args": "skia_use_direct3d=true extra_cflags+=[\"-DSK_FONT_HOST_USE_SYSTEM_SETTINGS\"]"
+          },
+          "x86_64": {
+            "triple": "x86_64-pc-windows-msvc",
+            "target_os": "",
+            "target_arch": "x86_64",
+            "args": "skia_use_direct3d=true extra_cflags+=[\"-DSK_FONT_HOST_USE_SYSTEM_SETTINGS\"]"
+          }
+        },
+        "macos": {
+          "arm64": {
+            "triple": "aarch64-apple-darwin",
+            "target_os": "",
+            "target_arch": "arm64",
+            "args": "skia_use_metal=true extra_cflags_cc+=[\"-frtti\"] extra_cflags+=[\"-stdlib=libc++\"]"
+          },
+          "x86_64": {
+            "triple": "x86_64-apple-darwin",
+            "target_os": "",
+            "target_arch": "x86_64",
+            "args": "skia_use_metal=true extra_cflags_cc+=[\"-frtti\"] extra_cflags+=[\"-stdlib=libc++\", \"-mmacosx-version-min=10.13\"]"
+          }
+        }
+      }
+    }
 jobs:
-  build_host:
+  build:
     runs-on: ${{ matrix.os }}-latest
     strategy:
       matrix:
         os: [ubuntu, windows, macos]
+        arch: [x86_64, arm64]
+        target_os: [self, android, ios]
         is_official_build: [true, false]
         is_component_build: [true, false]
+        exclude:
+          - os: ubuntu
+            target_os: ios
+          - os: windows
+            target_os: ios
+          - target_os: ios
+            arch: x86_64
+          - target_os: android
+            arch: x86_64
     env:
-      USE_VULKAN: ${{matrix.os != 'macos' && 'skia_use_vulkan=true' || 'skia_use_vulkan=false'}}
+      USE_VULKAN: ${{(matrix.os != 'macos' || matrix.target_os == 'android') && 'skia_use_vulkan=true' || 'skia_use_vulkan=false'}}
       IS_OFFICIAL_BUILD: is_official_build=${{matrix.is_official_build && 'true' || 'false'}}
       IS_COMPONENT_BUILD: is_component_build=${{matrix.is_component_build && 'true' || 'false'}}
-      TARGET: ${{matrix.os == 'ubuntu' && 'x86_64-unknown-linux-gnu' || (matrix.os == 'macos' && 'x86_64-apple-darwin' || 'x86_64-pc-windows-msvc')}}
+      FULL_ARGS: 'extra_asmflags=[] extra_cflags=[] extra_cflags_c=[] extra_cflags_cc=[] extra_ldflags=[] skia_enable_tools=false cc="clang" cc_wrapper="sccache" cxx="clang++" clang_win="C:\\Program Files\\LLVM" clang_win_version="16" skia_use_system_expat=false skia_use_system_freetype2=false skia_use_system_harfbuzz=false skia_use_system_icu=false skia_use_system_libjpeg_turbo=false skia_use_system_libpng=false skia_use_system_libwebp=false skia_use_system_zlib=false'
     steps:
       - name: Check LLVM version
         if: matrix.os == 'windows'
@@ -35,6 +126,11 @@ jobs:
       - name: Install Ninja
         uses: seanmiddleditch/gha-setup-ninja@master
       
+      - name: Install Deps on Linux
+        if: matrix.os == 'ubuntu'
+        shell: bash
+        run: ./tools/install_dependencies.sh
+
       - name: Cache ThirdParty dirs
         uses: actions/cache@v3
         with:
@@ -44,6 +140,13 @@ jobs:
 
       - name: Build and Archive Libs
         shell: bash
+        env:
+          TARGET: ${{fromJson(env.build_info)[matrix.target_os][matrix.os][matrix.arch].triple}}
+          TARGET_OS_ARG: ${{fromJson(env.build_info)[matrix.target_os][matrix.os][matrix.arch].target_os}}
+          TARGET_ARCH_ARG: ${{fromJson(env.build_info)[matrix.target_os][matrix.os][matrix.arch].target_arch}}
+          TARGET_ARGS: ${{fromJson(env.build_info)[matrix.target_os][matrix.os][matrix.arch].args}}
+          TARGET_OS: ${{ matrix.target_os != 'self' && matrix.target_os || runner.os}}
+
         run: bash ./ckia/build_skia.sh
 
       - name: Upload Artifacts
