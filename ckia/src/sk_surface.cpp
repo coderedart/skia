@@ -27,7 +27,9 @@
 #include "ckia/include/sk_surface.h"
 
 #include "ckia/src/sk_types_priv.h"
-
+#if SK_METAL
+#include "include/gpu/ganesh/mtl/SkSurfaceMetal.h"
+#endif
 // surface
 
 sk_surface_t* sk_surface_new_null(int width, int height) {
