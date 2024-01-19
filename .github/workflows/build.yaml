@@ -48,7 +48,7 @@ env:
             "triple": "aarch64-unknown-linux-gnu",
             "target_os": "",
             "target_arch": "arm64",
-            "args": "skia_use_egl=true skia_use  skia_use_no_jpeg_encode=true skia_use_no_png_encode=true skia_use_no_webp_encode=true extra_cflags_cc+=[\"-frtti\"]"
+            "args": "skia_use_egl=true skia_use_no_jpeg_encode=true skia_use_no_png_encode=true skia_use_no_webp_encode=true extra_cflags_cc+=[\"-frtti\"]"
           },
           "x86_64": {
             "triple": "x86_64-unknown-linux-gnu",
