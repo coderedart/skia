@@ -2,143 +2,46 @@ on:
   push:
     branches:
       - "ckia*"
-
 name: Build
 env:
-  build_info: >
-    {
-      "android": {
-        "ubuntu": {
-          "arm64": {
-            "triple": "ubuntu_aarch64-linux-android",
-            "target_os": "android",
-            "target_arch": "arm64",
-            "args": ""
-          }
-        },
-        "windows": {
-          "arm64": {
-            "triple": "windows_aarch64-linux-android",
-            "target_os": "android",
-            "target_arch": "arm64",
-            "args": ""
-          }
-        },
-        "macos": {
-          "arm64": {
-            "triple": "macos_aarch64-linux-android",
-            "target_os": "android",
-            "target_arch": "arm64",
-            "args": ""
-          }
-        }
-      },
-      "ios": {
-        "macos": {
-          "arm64": {
-            "triple": "macos_aarch64-apple-ios",
-            "target_os": "ios",
-            "target_arch": "arm64"
-          }
-        }
-      },
-      "self": {
-        "ubuntu": {
-          "arm64": {
-            "triple": "aarch64-unknown-linux-gnu",
-            "target_os": "",
-            "target_arch": "arm64",
-            "args": "skia_use_egl=true skia_use_no_jpeg_encode=true skia_use_no_png_encode=true skia_use_no_webp_encode=true extra_cflags_cc+=[\"-frtti\"]"
-          },
-          "x86_64": {
-            "triple": "x86_64-unknown-linux-gnu",
-            "target_os": "",
-            "target_arch": "x86_64",
-            "args": "skia_use_egl=true extra_cflags_cc+=[\"-frtti\"]"
-          }
-        },
-        "windows": {
-          "arm64": {
-            "triple": "aarch64-pc-windows-msvc",
-            "target_os": "",
-            "target_arch": "arm64",
-            "args": "skia_use_angle=true extra_cflags+=[\"-DSK_FONT_HOST_USE_SYSTEM_SETTINGS\"]"
-          },
-          "x86_64": {
-            "triple": "x86_64-pc-windows-msvc",
-            "target_os": "",
-            "target_arch": "x86_64",
-            "args": "extra_cflags+=[\"-DSK_FONT_HOST_USE_SYSTEM_SETTINGS\"]"
-          }
-        },
-        "macos": {
-          "arm64": {
-            "triple": "aarch64-apple-darwin",
-            "target_os": "",
-            "target_arch": "arm64",
-            "args": "skia_use_metal=true extra_cflags_cc+=[\"-frtti\"] extra_cflags+=[\"-stdlib=libc++\"]"
-          },
-          "x86_64": {
-            "triple": "x86_64-apple-darwin",
-            "target_os": "",
-            "target_arch": "x86_64",
-            "args": "skia_use_metal=true extra_cflags_cc+=[\"-frtti\"] extra_cflags+=[\"-stdlib=libc++\", \"-mmacosx-version-min=10.13\"]"
-          }
-        }
-      }
-    }
+  DEFAULT_ARGS: >
+    skia_enable_tools=false 
+    skia_enable_fontmgr_custom_directory=true
+    skia_enable_fontmgr_custom_embedded=true
+    skia_enable_fontmgr_custom_empty=true
+    skia_enable_skottie=true
+    cc="clang" 
+    cc_wrapper="sccache" 
+    cxx="clang++" 
+    clang_win="C:\\Program Files\\LLVM" 
+    clang_win_version="16" 
+    skia_use_system_expat=false 
+    skia_use_system_freetype2=false 
+    skia_use_system_harfbuzz=false 
+    skia_use_system_icu=false 
+    skia_use_system_libjpeg_turbo=false 
+    skia_use_system_libpng=false 
+    skia_use_system_libwebp=false 
+    skia_use_system_zlib=false 
+    extra_asmflags=[] extra_cflags=[] extra_cflags_c=[] extra_cflags_cc=[] extra_ldflags=[]
 jobs:
   build:
-    runs-on: ${{ matrix.os }}-latest
+    runs-on: ${{ matrix.config.os }}-latest
     strategy:
       matrix:
-        os: [ubuntu, windows, macos]
-        arch: [x86_64, arm64]
-        target_os: [self, android]
+        config:
+          - triple: x86_64-unknown-linux-gnu
+            os: ubuntu
+            args: 'skia_use_egl=true extra_cflags_cc+=["-frtti"]'
+          - triple: x86_64-pc-windows-msvc
+            os: windows
+            args: 'extra_cflags+=["-DSK_FONT_HOST_USE_SYSTEM_SETTINGS"]'
         profile: [release, debug]
         libtype: [static, shared]
         exclude:
-          - target_os: android # desktop android? who cares
-            arch: x86_64
-          - os: macos # i don't have apple hardware to test, so i will skip this risky config
-            target_os: android
-          - os: ubuntu
-            arch: arm64 # softfp abi error with linux arm
-          - os: windows # windows arm is only experimentally supported. 
-            arch: arm64
           - profile: debug # lets avoid debug info when building shared libs. windows has some dll import/export error
             libtype: shared
-          
-    env:
-      USE_VULKAN: ${{(matrix.os != 'macos' || matrix.target_os == 'android') && 'skia_use_vulkan=true' || 'skia_use_vulkan=false'}}
-      IS_OFFICIAL_BUILD: is_official_build=${{matrix.profile == 'release' && 'true' || 'false'}}
-      IS_COMPONENT_BUILD: is_component_build=${{matrix.libtype == 'shared' && 'true' || 'false'}}
-      FULL_ARGS: >
-        skia_enable_tools=false 
-        skia_enable_fontmgr_custom_directory=true
-        skia_enable_fontmgr_custom_embedded=true
-        skia_enable_fontmgr_custom_empty=true
-        skia_enable_skottie=true
-        cc="clang" 
-        cc_wrapper="sccache" 
-        cxx="clang++" 
-        clang_win="C:\\Program Files\\LLVM" 
-        clang_win_version="16" 
-        skia_use_system_expat=false 
-        skia_use_system_freetype2=false 
-        skia_use_system_harfbuzz=false 
-        skia_use_system_icu=false 
-        skia_use_system_libjpeg_turbo=false 
-        skia_use_system_libpng=false 
-        skia_use_system_libwebp=false 
-        skia_use_system_zlib=false 
-        extra_asmflags=[] extra_cflags=[] extra_cflags_c=[] extra_cflags_cc=[] extra_ldflags=[]
     steps:
-      - name: Check LLVM version
-        if: matrix.os == 'windows'
-        shell: bash
-        run: ls C:/Program\ Files/LLVM/lib/clang
-
       - name: Checkout
         uses: actions/checkout@v4
         
@@ -149,34 +52,27 @@ jobs:
         uses: seanmiddleditch/gha-setup-ninja@master
       
       - name: Install Deps on Linux
-        if: matrix.os == 'ubuntu'
+        if: matrix.config.os == 'ubuntu'
         shell: bash
         run: ./tools/install_dependencies.sh
 
-      - name: Cache ThirdParty dirs
-        uses: actions/cache@v3
-        with:
-          path: './third_party/externals'
-          key: ${{hashFiles('./DEPS')}}
-          enableCrossOsArchive: True
+      - name: Remove Useless Sources
+        run: python ckia/rm_useless_src.py
 
       - name: Build and Archive Libs
         shell: bash
         env:
-          TARGET: ${{fromJson(env.build_info)[matrix.target_os][matrix.os][matrix.arch].triple}}
-          TARGET_OS_ARG: ${{fromJson(env.build_info)[matrix.target_os][matrix.os][matrix.arch].target_os}}
-          TARGET_ARCH_ARG: ${{fromJson(env.build_info)[matrix.target_os][matrix.os][matrix.arch].target_arch}}
-          TARGET_ARGS: ${{fromJson(env.build_info)[matrix.target_os][matrix.os][matrix.arch].args}}
-          TARGET_OS: ${{ matrix.target_os != 'self' && matrix.target_os || runner.os}}
-
+          TARGET: ${{matrix.config.triple}}
+          TARGET_ARGS: ${{matrix.config.args}}
+          USE_VULKAN: ${{matrix.config.os != 'macos' && 'skia_use_vulkan=true' || 'skia_use_vulkan=false'}}
+          IS_OFFICIAL_BUILD: is_official_build=${{matrix.profile == 'release' && 'true' || 'false'}}
+          IS_COMPONENT_BUILD: is_component_build=${{matrix.libtype == 'shared' && 'true' || 'false'}}
         run: bash ./ckia/build_skia.sh
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
-        if: matrix.profile == 'release' && matrix.libtype == 'shared' && matrix.os != 'ubuntu'
+        if: matrix.profile == 'release'
         with:
-          name: ${{matrix.os}}_${{matrix.target_os}}_${{matrix.arch}}_${{matrix.libtype}}_${{matrix.profile}}
-          retention-days: 7 
+          name: ${{matrix.libtype}}_${{matrix.config.triple}}
+          retention-days: 7
           path: 'out/*.tar.gz'
-      
-      

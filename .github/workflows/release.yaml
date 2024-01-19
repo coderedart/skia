@@ -1,31 +1,110 @@
 on:
-    push:
-      tags:
-        - "ckia_*"
-name: Binaries Release
+  push:
+    tags:
+      - "ckia_*"
+
+name: Build
 env:
-  CARGO_INCREMENTAL: 0
+  DEFAULT_ARGS: >
+    skia_enable_tools=false 
+    skia_enable_fontmgr_custom_directory=true
+    skia_enable_fontmgr_custom_embedded=true
+    skia_enable_fontmgr_custom_empty=true
+    skia_enable_skottie=true
+    cc="clang" 
+    cc_wrapper="sccache" 
+    cxx="clang++" 
+    clang_win="C:\\Program Files\\LLVM" 
+    clang_win_version="16" 
+    skia_use_system_expat=false 
+    skia_use_system_freetype2=false 
+    skia_use_system_harfbuzz=false 
+    skia_use_system_icu=false 
+    skia_use_system_libjpeg_turbo=false 
+    skia_use_system_libpng=false 
+    skia_use_system_libwebp=false 
+    skia_use_system_zlib=false 
+    extra_asmflags=[] extra_cflags=[] extra_cflags_c=[] extra_cflags_cc=[] extra_ldflags=[]
 jobs:
-  build:
+  # for creating a source tarball
+  src: 
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      
       - name: Remove Useless Sources
         run: python ckia/rm_useless_src.py
-
       - name: Package Sources
         shell: bash
         run: |
             mkdir out
             tar --exclude='./.git' --exclude='./out' -czvf ./out/src.tar.gz .
-
       - name: Upload Assets
         uses: xresloader/upload-to-github-release@v1
+        if: 
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tags: true
           draft: true
           file: "./out/src.tar.gz"
+  # for creating static and shared libraries
+  build:
+    runs-on: ${{ matrix.config.os }}-latest
+    strategy:
+      matrix:
+        config:
+          - triple: x86_64-unknown-linux-gnu
+            os: ubuntu
+            args: 'skia_use_egl=true extra_cflags_cc+=["-frtti"]'
+          - triple: x86_64-pc-windows-msvc
+            os: windows
+            args: 'extra_cflags+=["-DSK_FONT_HOST_USE_SYSTEM_SETTINGS"]'
+        profile: [release, debug]
+        libtype: [static, shared]
+        exclude:
+          - profile: debug # lets avoid debug info when building shared libs. windows has some dll import/export error
+            libtype: shared  
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        
+      - name: Run sccache-cache # to speedup skia compilation
+        uses: mozilla-actions/sccache-action@v0.0.3
+        
+      - name: Install Ninja
+        uses: seanmiddleditch/gha-setup-ninja@master
+      
+      - name: Install Deps on Linux
+        if: matrix.config.os == 'ubuntu'
+        shell: bash
+        run: ./tools/install_dependencies.sh
+
+      - name: Remove Useless Sources
+        run: python ckia/rm_useless_src.py
+
+      - name: Build and Archive Libs
+        shell: bash
+        env:
+          TARGET: ${{matrix.config.triple}}
+          TARGET_ARGS: ${{matrix.config.args}}
+          USE_VULKAN: ${{matrix.config.os != 'macos' && 'skia_use_vulkan=true' || 'skia_use_vulkan=false'}}
+          IS_OFFICIAL_BUILD: is_official_build=${{matrix.profile == 'release' && 'true' || 'false'}}
+          IS_COMPONENT_BUILD: is_component_build=${{matrix.libtype == 'shared' && 'true' || 'false'}}
+        run: bash ./ckia/build_skia.sh
+      - name: Package Sources
+        shell: bash
+        run: |
+            mkdir out
+            tar --exclude='./.git' --exclude='./out' -czvf ./out/src.tar.gz .
+  
+      - name: Upload Assets
+        uses: xresloader/upload-to-github-release@v1
+        if: 
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tags: true
+          draft: true
+          file: "./out/*.tar.gz"
+      
