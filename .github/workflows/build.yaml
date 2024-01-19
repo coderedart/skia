@@ -62,13 +62,13 @@ env:
             "triple": "aarch64-pc-windows-msvc",
             "target_os": "",
             "target_arch": "arm64",
-            "args": "skia_use_direct3d=true extra_cflags+=[\"-DSK_FONT_HOST_USE_SYSTEM_SETTINGS\"]"
+            "args": "skia_use_angle=true extra_cflags+=[\"-DSK_FONT_HOST_USE_SYSTEM_SETTINGS\"]"
           },
           "x86_64": {
             "triple": "x86_64-pc-windows-msvc",
             "target_os": "",
             "target_arch": "x86_64",
-            "args": "skia_use_direct3d=true extra_cflags+=[\"-DSK_FONT_HOST_USE_SYSTEM_SETTINGS\"]"
+            "args": "extra_cflags+=[\"-DSK_FONT_HOST_USE_SYSTEM_SETTINGS\"]"
           }
         },
         "macos": {
