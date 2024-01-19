@@ -268,7 +268,7 @@ gr_backendtexture_t* gr_backendtexture_new_metal(int width,
                                                  const gr_mtl_textureinfo_t* mtlInfo) {
     return SK_ONLY_METAL(
             ToGrBackendTexture(new GrBackendTexture(
-                    width, height, (skgpu::GrMipMapped)mipmapped, AsGrMtlTextureInfo(mtlInfo))),
+                    width, height, (skgpu::Mipmapped)mipmapped, AsGrMtlTextureInfo(mtlInfo))),
             nullptr);
 }
 
