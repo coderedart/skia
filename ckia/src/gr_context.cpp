@@ -268,7 +268,7 @@ gr_backendtexture_t* gr_backendtexture_new_metal(int width,
                                                  const gr_mtl_textureinfo_t* mtlInfo) {
     return SK_ONLY_METAL(
             ToGrBackendTexture(new GrBackendTexture(
-                    width, height, (GrMipMapped)mipmapped, AsGrMtlTextureInfo(mtlInfo))),
+                    width, height, (skgpu::GrMipMapped)mipmapped, AsGrMtlTextureInfo(mtlInfo))),
             nullptr);
 }
 
@@ -314,7 +314,6 @@ gr_backendrendertarget_t* gr_backendrendertarget_new_gl(
 
 gr_backendrendertarget_t* gr_backendrendertarget_new_vulkan(int width,
                                                             int height,
-                                                            int samples,
                                                             const gr_vk_imageinfo_t* vkImageInfo) {
     return SK_ONLY_VULKAN(ToGrBackendRenderTarget(new GrBackendRenderTarget(GrBackendRenderTargets::MakeVk(
                                   width, height, *AsGrVkImageInfo(vkImageInfo)))),
@@ -323,10 +322,9 @@ gr_backendrendertarget_t* gr_backendrendertarget_new_vulkan(int width,
 
 gr_backendrendertarget_t* gr_backendrendertarget_new_metal(int width,
                                                            int height,
-                                                           int samples,
                                                            const gr_mtl_textureinfo_t* mtlInfo) {
     return SK_ONLY_METAL(ToGrBackendRenderTarget(new GrBackendRenderTarget(
-                                 width, height, samples, AsGrMtlTextureInfo(mtlInfo))),
+                                 width, height, AsGrMtlTextureInfo(mtlInfo))),
                          nullptr);
 }
 
