@@ -29,6 +29,8 @@ jobs:
     runs-on: ${{ matrix.config.os }}-latest
     strategy:
       matrix:
+        profile: [release, debug]
+        libtype: [static, shared]
         config:
           - triple: x86_64-unknown-linux-gnu
             os: ubuntu
@@ -36,14 +38,15 @@ jobs:
           - triple: x86_64-pc-windows-msvc
             os: windows
             args: 'extra_cflags+=["-DSK_FONT_HOST_USE_SYSTEM_SETTINGS"]'
-        profile: [release, debug]
-        libtype: [static, shared]
         exclude:
           - profile: debug # lets avoid debug info when building shared libs. windows has some dll import/export error
             libtype: shared
           - libtype: shared # shared libs on windows has some error with dll import/export in skottie
             config:
-              - os: windows
+              - triple: x86_64-pc-windows-msvc
+                os: windows
+                args: 'extra_cflags+=["-DSK_FONT_HOST_USE_SYSTEM_SETTINGS"]
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
