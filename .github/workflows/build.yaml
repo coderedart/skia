@@ -95,8 +95,8 @@ jobs:
         os: [ubuntu, windows, macos]
         arch: [x86_64, arm64]
         target_os: [self, android]
-        is_official_build: [true, false]
-        is_component_build: [true, false]
+        profile: [release, debug]
+        libtype: [static, shared]
         exclude:
           - target_os: android # desktop android? who cares
             arch: x86_64
@@ -104,8 +104,8 @@ jobs:
             target_os: android
     env:
       USE_VULKAN: ${{(matrix.os != 'macos' || matrix.target_os == 'android') && 'skia_use_vulkan=true' || 'skia_use_vulkan=false'}}
-      IS_OFFICIAL_BUILD: is_official_build=${{matrix.is_official_build && 'true' || 'false'}}
-      IS_COMPONENT_BUILD: is_component_build=${{matrix.is_component_build && 'true' || 'false'}}
+      IS_OFFICIAL_BUILD: is_official_build=${{matrix.profile == 'release' && 'true' || 'false'}}
+      IS_COMPONENT_BUILD: is_component_build=${{matrix.libtype == 'shared' && 'true' || 'false'}}
       FULL_ARGS: 'extra_asmflags=[] extra_cflags=[] extra_cflags_c=[] extra_cflags_cc=[] extra_ldflags=[] skia_enable_tools=false cc="clang" cc_wrapper="sccache" cxx="clang++" clang_win="C:\\Program Files\\LLVM" clang_win_version="16" skia_use_system_expat=false skia_use_system_freetype2=false skia_use_system_harfbuzz=false skia_use_system_icu=false skia_use_system_libjpeg_turbo=false skia_use_system_libpng=false skia_use_system_libwebp=false skia_use_system_zlib=false'
     steps:
       - name: Check LLVM version
@@ -147,7 +147,9 @@ jobs:
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
+        if: matrix.profile == 'release' && matrix.libtype == 'shared' && matrix.os != 'ubuntu'
         with:
+          name: ${{matrix.os}}_${{matrix.target_os}}_${{matrix.arch}}_${{matrix.libtype}}_${{matrix.profile}}
           path: 'out/*.tar.gz'
       
       
