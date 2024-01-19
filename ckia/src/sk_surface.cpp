@@ -129,7 +129,7 @@ sk_surface_t* sk_surface_new_metal_layer(gr_recording_context_t* context,
                                          const sk_surfaceprops_t* props,
                                          gr_mtl_handle_t* drawable) {
     return SK_ONLY_METAL(
-            ToSurface(SkSurface::MakeFromCAMetalLayer(AsGrRecordingContext(context),
+            ToSurface(SkSurfaces::WrapCAMetalLayer(AsGrRecordingContext(context),
                                                       layer,
                                                       (GrSurfaceOrigin)origin,
                                                       sampleCount,
@@ -148,7 +148,7 @@ sk_surface_t* sk_surface_new_metal_view(gr_recording_context_t* context,
                                         sk_colortype_t colorType,
                                         sk_colorspace_t* colorspace,
                                         const sk_surfaceprops_t* props) {
-    return SK_ONLY_METAL(ToSurface(SkSurface::MakeFromMTKView(AsGrRecordingContext(context),
+    return SK_ONLY_METAL(ToSurface(SkSurfaces::WrapMTKView(AsGrRecordingContext(context),
                                                               mtkView,
                                                               (GrSurfaceOrigin)origin,
                                                               sampleCount,
