@@ -102,6 +102,9 @@ jobs:
             arch: x86_64
           - os: macos # i don't have apple hardware to test, so i will skip this risky config
             target_os: android
+          - os: ubuntu
+            arch: arm64 # softfp abi error with linux arm
+          
     env:
       USE_VULKAN: ${{(matrix.os != 'macos' || matrix.target_os == 'android') && 'skia_use_vulkan=true' || 'skia_use_vulkan=false'}}
       IS_OFFICIAL_BUILD: is_official_build=${{matrix.profile == 'release' && 'true' || 'false'}}
