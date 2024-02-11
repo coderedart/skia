@@ -1428,7 +1428,85 @@ if (skia_enable_ganesh && skia_generate_workarounds) {
 }
 
 import("gn/codec.gni")
-
+ckia_public = [
+  "ckia/include/gr_context.h",
+  "ckia/include/paragraph.h",
+  "ckia/include/sk_bitmap.h",
+  "ckia/include/sk_canvas.h",
+  "ckia/include/sk_codec.h",
+  "ckia/include/sk_colorfilter.h",
+  "ckia/include/sk_colorspace.h",
+  "ckia/include/sk_data.h",
+  "ckia/include/sk_document.h",
+  "ckia/include/sk_drawable.h",
+  "ckia/include/sk_font.h",
+  "ckia/include/sk_general.h",
+  "ckia/include/sk_graphics.h",
+  "ckia/include/sk_imagefilter.h",
+  "ckia/include/sk_image.h",
+  "ckia/include/sk_maskfilter.h",
+  "ckia/include/sk_matrix.h",
+  "ckia/include/skottie_animation.h",
+  "ckia/include/sk_paint.h",
+  "ckia/include/sk_patheffect.h",
+  "ckia/include/sk_path.h",
+  "ckia/include/sk_picture.h",
+  "ckia/include/sk_pixmap.h",
+  "ckia/include/sk_region.h",
+  "ckia/include/sk_rrect.h",
+  "ckia/include/sk_runtimeeffect.h",
+  "ckia/include/sksg_invalidation_controller.h",
+  "ckia/include/sk_shader.h",
+  "ckia/include/sk_stream.h",
+  "ckia/include/sk_string.h",
+  "ckia/include/sk_surface.h",
+  "ckia/include/sk_svg.h",
+  "ckia/include/sk_textblob.h",
+  "ckia/include/sk_typeface.h",
+  "ckia/include/sk_types.h",
+  "ckia/include/sk_vertices.h",
+]
+ckia_sources = [
+  "ckia/src/gr_context.cpp",
+  "ckia/src/paragraph.cpp",
+  "ckia/src/sk_all.c",
+  "ckia/src/sk_bitmap.cpp",
+  "ckia/src/sk_canvas.cpp",
+  "ckia/src/sk_codec.cpp",
+  "ckia/src/sk_colorfilter.cpp",
+  "ckia/src/sk_colorspace.cpp",
+  "ckia/src/sk_data.cpp",
+  "ckia/src/sk_document.cpp",
+  "ckia/src/sk_drawable.cpp",
+  "ckia/src/sk_enums.cpp",
+  "ckia/src/sk_font.cpp",
+  "ckia/src/sk_general.cpp",
+  "ckia/src/sk_graphics.cpp",
+  "ckia/src/sk_image.cpp",
+  "ckia/src/sk_imagefilter.cpp",
+  "ckia/src/sk_maskfilter.cpp",
+  "ckia/src/sk_matrix.cpp",
+  "ckia/src/sk_paint.cpp",
+  "ckia/src/sk_path.cpp",
+  "ckia/src/sk_patheffect.cpp",
+  "ckia/src/sk_picture.cpp",
+  "ckia/src/sk_pixmap.cpp",
+  "ckia/src/sk_region.cpp",
+  "ckia/src/sk_rrect.cpp",
+  "ckia/src/sk_runtimeeffect.cpp",
+  "ckia/src/sk_shader.cpp",
+  "ckia/src/sk_stream.cpp",
+  "ckia/src/sk_string.cpp",
+  "ckia/src/sk_structs.cpp",
+  "ckia/src/sk_surface.cpp",
+  "ckia/src/sk_svg.cpp",
+  "ckia/src/sk_textblob.cpp",
+  "ckia/src/sk_typeface.cpp",
+  "ckia/src/sk_types_priv.h",
+  "ckia/src/sk_vertices.cpp",
+  "ckia/src/skottie_animation.cpp",
+  "ckia/src/sksg_invalidation_controller.cpp",
+]
 skia_component("skia") {
   public_configs = [ ":skia_public" ]
   configs = skia_library_configs
@@ -1478,8 +1556,10 @@ skia_component("skia") {
   public += skia_utils_public
   public += skia_effects_public
   public += skia_effects_imagefilter_public
+  public += ckia_public  
 
   sources = []
+  sources += ckia_sources
   sources += skia_core_sources
   sources += skia_utils_private
   sources += skia_utils_chromium
@@ -1508,6 +1588,7 @@ skia_component("skia") {
 
   defines = []
   libs = []
+  defines += [ "SKIAC_IMPL=1" ]
 
   if (skia_enable_sksl_tracing) {
     sources += skia_sksl_tracing_sources

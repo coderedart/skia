@@ -9,8 +9,10 @@
 
 #if defined(_WIN32) && defined(SK_USING_THIRD_PARTY_ICU)
 bool SkLoadICU();
+bool SkLoadICUMemory(void*);
 #else
 static inline bool SkLoadICU() { return true; }
+static inline bool SkLoadICUMemory(void*) { return true; }
 #endif  // defined(_WIN32) && defined(SK_USING_THIRD_PARTY_ICU)
 
 #endif  // load_icu_DEFINED

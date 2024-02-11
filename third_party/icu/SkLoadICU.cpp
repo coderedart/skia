@@ -117,5 +117,5 @@ bool SkLoadICU() {
     });
     return good;
 }
-
+bool SkLoadICUMemory(void* icudtl) { return init_icu(icudtl); }
 #endif  // defined(_WIN32) && defined(SK_USING_THIRD_PARTY_ICU)
