@@ -1,4 +1,5 @@
 #include "ckia/include/gr_context.h"
+#include "ckia/include/paragraph.h"
 #include "ckia/include/sk_bitmap.h"
 #include "ckia/include/sk_canvas.h"
 #include "ckia/include/sk_codec.h"

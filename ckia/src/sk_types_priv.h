@@ -110,6 +110,7 @@ DEF_CLASS_MAP(SkFILEStream, sk_stream_filestream_t, FileStream)
 DEF_CLASS_MAP(SkFILEWStream, sk_wstream_filestream_t, FileWStream)
 DEF_CLASS_MAP(SkFlattenable, sk_flattenable_t, Flattenable)
 DEF_CLASS_MAP(SkFont, sk_font_t, Font)
+DEF_CLASS_MAP(SkFontArguments, sk_fontarguments_t, SkFontArguments);
 DEF_CLASS_MAP(SkFontMgr, sk_fontmgr_t, FontMgr)
 DEF_CLASS_MAP(SkFontStyle, sk_fontstyle_t, FontStyle)
 DEF_CLASS_MAP(SkFontStyleSet, sk_fontstyleset_t, FontStyleSet)
@@ -387,6 +388,26 @@ DEF_CLASS_MAP_WITH_NS(skottie, MarkerObserver, skottie_marker_observer_t, Skotti
 
 #include "modules/sksg/include/SkSGInvalidationController.h"
 DEF_CLASS_MAP_WITH_NS(sksg, InvalidationController, sksg_invalidation_controller_t, SksgInvalidationController)
+
+#include "modules/skparagraph/include/FontArguments.h"
+DEF_CLASS_MAP_WITH_NS(skia::textlayout, FontArguments, tl_font_arguments_t, TlFontArguments)
+
+#include "modules/skparagraph/include/TextStyle.h"
+DEF_CLASS_MAP_WITH_NS(skia::textlayout, TextStyle, tl_text_style_t, TlTextStyle)
+// #include "modules/skparagraph/include/ParagraphPainter.h"
+// DEF_CLASS_MAP_WITH_NS(skia::textlayout, ParagraphPainter, tl_paragraph_painter_t, TlParagraphPainter);
+#include "modules/skparagraph/include/ParagraphStyle.h"
+DEF_CLASS_MAP_WITH_NS(skia::textlayout, StrutStyle, tl_strut_style_t, TlStrutStyle)
+DEF_CLASS_MAP_WITH_NS(skia::textlayout, ParagraphStyle, tl_paragraph_style_t, TlParagraphStyle)
+
+#include "modules/skparagraph/include/FontCollection.h"
+DEF_CLASS_MAP_WITH_NS(skia::textlayout, FontCollection, tl_font_collection_t, TlFontCollection)
+
+#include "modules/skparagraph/include/ParagraphBuilder.h"
+DEF_CLASS_MAP_WITH_NS(skia::textlayout, ParagraphBuilder, tl_paragraph_builder_t, TlParagraphBuilder)
+
+#include "modules/skparagraph/include/Paragraph.h"
+DEF_CLASS_MAP_WITH_NS(skia::textlayout, Paragraph, tl_paragraph_t, TlParagraph)
 
 #if defined(SK_GANESH)
 // GPU specific

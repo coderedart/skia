@@ -364,6 +364,7 @@ typedef uint32_t sk_font_table_tag_t;
 typedef struct sk_fontmgr_t sk_fontmgr_t;
 typedef struct sk_fontstyle_t sk_fontstyle_t;
 typedef struct sk_fontstyleset_t sk_fontstyleset_t;
+typedef struct sk_fontarguments_t sk_fontarguments_t;
 /**
  *  Abstraction layer directly on top of an image codec.
  */
@@ -1067,6 +1068,149 @@ typedef enum {
     SKIP_TOP_LEVEL_ISOLATION = 0x01,
     DISABLE_TOP_LEVEL_CLIPPING = 0x02,
 } skottie_animation_renderflags_t;
+/*
+ * SkParagraph TextLayout
+ */
+typedef struct tl_font_arguments_t tl_font_arguments_t;
+// dart types
+
+typedef enum { UPSTREAM_AFFINITY, DOWNSTREAM_AFFINITY } tl_affinity_t;
+
+typedef enum {
+    TIGHT_RECT_HEIGHT_STYLE,
+    MAX_RECT_HEIGHT_STYLE,
+    INCLUDE_LINE_SPACING_MIDDLE_RECT_HEIGHT_STYLE,
+    INCLUDE_LINE_SPACING_TOP_RECT_HEIGHT_STYLE,
+    INCLUDE_LINE_SPACING_BOTTOM_RECT_HEIGHT_STYLE,
+    STRUT_RECT_HEIGHT_STYLE
+} tl_rect_height_style_t;
+
+typedef enum { TIGHT_RECT_WIDTH_STYLE, MAX_RECT_WIDTH_STYLE } tl_rect_width_style_t;
+
+typedef enum {
+    LEFT_TEXT_ALIGN,
+    RIGHT_TEXT_ALIGN,
+    CENTER_TEXT_ALIGN,
+    JUSTIFY_TEXT_ALIGN,
+    START_TEXT_ALIGN,
+    END_TEXT_ALIGN,
+} tl_text_align_t;
+
+typedef enum {
+    RTL_TEXT_DIRECTION,
+    LTR_TEXT_DIRECTION,
+} tl_text_direction_t;
+
+typedef struct {
+    // default: 0
+    int32_t position;
+    // default: downstream
+    tl_affinity_t affinity;
+} tl_position_with_affinity_t;
+
+typedef struct {
+    sk_rect_t rect;
+    tl_text_direction_t direction;
+} tl_text_box_t;
+
+typedef enum {
+    ALPHABETIC_TEXT_BASELINE,
+    IDEOGRAPHIC_TEXT_BASELINE,
+} tl_text_baseline_t;
+
+typedef enum {
+    ALL_TEXT_HEIGHT_BEHAVIOR = 0x0,
+    DISABLE_FIRST_ASCENT_TEXT_HEIGHT_BEHAVIOR = 0x1,
+    DISABLE_LAST_DESCENT_TEXT_HEIGHT_BEHAVIOR = 0x2,
+    DISABLE_ALL_TEXT_HEIGHT_BEHAVIOR = 0x1 | 0x2,
+} tl_text_height_behavior_t;
+
+typedef enum { TYPOGRAPHIC_LINE_METRIC_STYLE, CSS_LINE_METRIC_STYLE } tl_line_metric_style_t;
+
+typedef struct {
+    sk_color_t fColor;
+    sk_point_t fOffset;
+    double fBlurSigma;
+} tl_text_shadow;
+
+typedef enum {
+    NO_DECORATION = 0x0,
+    UNDERLINE = 0x1,
+    OVERLINE = 0x2,
+    LINE_THROUGH = 0x4,
+} tl_text_decoration_t;
+
+typedef enum {
+    SOLID_TEXT_DECORATION_STYLE,
+    DOUBLE_TEXT_DECORATION_STYLE,
+    DOTTED_TEXT_DECORATION_STYLE,
+    DASHED_TEXT_DECORATION_STYLE,
+    WAVY_TEXT_DECORATION_STYLE
+} tl_text_decoration_style_t;
+
+typedef enum { GAPS_TEXT_DECORATION_MODE, THROUGH_TEXT_DECORATION_MODE } tl_text_decoration_mode_t;
+
+typedef enum {
+    NONE_STYLE_TYPE,
+    ALL_ATTRIBUTES_STYLE_TYPE,
+    FONT_STYLE_TYPE,
+    FOREGROUND_STYLE_TYPE,
+    BACKGROUND_STYLE_TYPE,
+    SHADOW_STYLE_TYPE,
+    DECORATIONS_STYLE_TYPE,
+    LETTER_SPACING_STYLE_TYPE,
+    WORD_SPACING_STYLE_TYPE
+} tl_style_type_t;
+
+typedef enum {
+    BASELINE_PLACEHOLDER_ALIGNMENT,
+    ABOVE_BASELINE_PLACEHOLDER_ALIGNMENT,
+    BELOW_BASELINE_PLACEHOLDER_ALIGNMENT,
+    TOP_PLACEHOLDER_ALIGNMENT,
+    BOTTOM_PLACEHOLDER_ALIGNMENT,
+    MIDDLE_PLACEHOLDER_ALIGNMENT,
+} tl_placeholder_alignment_t;
+
+typedef struct {
+    // default 0
+    float fWidth;
+    // default 0
+    float fHeight;
+    // default: baseline
+    tl_placeholder_alignment_t fAlignment;
+    // default: alphabetic
+    tl_text_baseline_t fBaseline;
+    // default: 0
+    float fBaselineOffset;
+} tl_placeholder_style_t;
+
+typedef struct {
+    tl_text_decoration_t fType;
+    tl_text_decoration_mode_t fMode;
+    sk_color_t fColor;
+    tl_text_decoration_style_t fStyle;
+    float fThicknessMultiplier;
+} tl_decoration_t;
+
+typedef struct tl_text_style_t tl_text_style_t;
+// paragraph painter
+typedef struct {
+    float fOnLength;
+    float fOffLength;
+} tl_dash_path_effect;
+
+// typedef tl_paragraph_painter_t tl_paragraph_painter_t;
+
+// paragraph style
+typedef struct tl_strut_style_t tl_strut_style_t;
+typedef struct tl_paragraph_style_t tl_paragraph_style_t; 
+
+// font collection
+typedef struct tl_font_collection_t tl_font_collection_t;
+// paragraph builder
+typedef struct tl_paragraph_builder_t tl_paragraph_builder_t;
+// paragraph
+typedef struct tl_paragraph_t tl_paragraph_t;
 
 SK_C_PLUS_PLUS_END_GUARD
 

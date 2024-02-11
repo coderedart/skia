@@ -25,6 +25,7 @@ To upgrade to a new milestone, just do the follow:
 # just above "skia_component("skia")" target declaration
 ckia_public = [
   "ckia/include/gr_context.h",
+  "ckia/include/paragraph.h",
   "ckia/include/sk_bitmap.h",
   "ckia/include/sk_canvas.h",
   "ckia/include/sk_codec.h",
@@ -62,6 +63,7 @@ ckia_public = [
 ]
 ckia_sources = [
   "//ckia/src/gr_context.cpp",
+  "//ckia/src/paragraph.cpp",
   "//ckia/src/sk_all.c",
   "//ckia/src/sk_bitmap.cpp",
   "//ckia/src/sk_canvas.cpp",
