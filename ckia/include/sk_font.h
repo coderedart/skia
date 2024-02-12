@@ -53,6 +53,7 @@ SK_C_API void sk_font_measure_text_no_return(const sk_font_t* font, const void* 
 SK_C_API void sk_font_get_widths_bounds(const sk_font_t* font, const uint16_t glyphs[], int count, float widths[], sk_rect_t bounds[], const sk_paint_t* paint);
 SK_C_API void sk_font_get_pos(const sk_font_t* font, const uint16_t glyphs[], int count, sk_point_t pos[], sk_point_t* origin);
 SK_C_API void sk_font_get_xpos(const sk_font_t* font, const uint16_t glyphs[], int count, float xpos[], float origin);
+SK_C_API size_t sk_font_get_intercepts(const sk_font_t* font, const uint16_t glyphs[], int count, const sk_point_t* pos, float top, float bottom, const sk_paint_t* cpaint_or_null, float* result_or_null, size_t result_len);
 SK_C_API bool sk_font_get_path(const sk_font_t* font, uint16_t glyph, sk_path_t* path);
 SK_C_API void sk_font_get_paths(const sk_font_t* font, uint16_t glyphs[], int count, const sk_glyph_path_proc glyphPathProc, void* context);
 SK_C_API float sk_font_get_metrics(const sk_font_t* font, sk_fontmetrics_t* metrics);

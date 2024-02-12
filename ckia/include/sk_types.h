@@ -1131,7 +1131,7 @@ typedef struct {
     sk_color_t fColor;
     sk_point_t fOffset;
     double fBlurSigma;
-} tl_text_shadow;
+} tl_text_shadow_t;
 
 typedef enum {
     NO_DECORATION = 0x0,
@@ -1207,10 +1207,13 @@ typedef struct tl_paragraph_style_t tl_paragraph_style_t;
 
 // font collection
 typedef struct tl_font_collection_t tl_font_collection_t;
+typedef struct tl_vec_of_sk_strings_t tl_vec_of_sk_strings_t;
 // paragraph builder
 typedef struct tl_paragraph_builder_t tl_paragraph_builder_t;
 // paragraph
 typedef struct tl_paragraph_t tl_paragraph_t;
+// convenience fn signatures that take a len and return a pointer to a buffer of that size (number of elements. NOT BYTES!!!)
+typedef void* (vec_resize_and_return_ptr)(size_t len);
 
 SK_C_PLUS_PLUS_END_GUARD
 

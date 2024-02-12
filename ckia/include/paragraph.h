@@ -26,8 +26,56 @@ SK_C_API sk_color_t tl_text_style_get_color(const tl_text_style_t* ts);
 SK_C_API void tl_text_style_set_color(tl_text_style_t* ts, sk_color_t color);
 SK_C_API bool tl_text_style_has_foreground(const tl_text_style_t* ts);
 SK_C_API sk_paint_t* tl_text_style_get_foreground(const tl_text_style_t* ts);
-SK_C_API void tl_text_style_set_foreground_paint(const tl_text_style_t* ts,
-                                                 const sk_paint_t* cpaint);
+SK_C_API void tl_text_style_set_foreground_paint(tl_text_style_t* ts, const sk_paint_t* cpaint);
+SK_C_API void tl_text_style_clear_foreground_color(tl_text_style_t* ts);
+SK_C_API bool tl_text_style_has_background(const tl_text_style_t* ts);
+SK_C_API sk_paint_t* tl_text_style_get_background(const tl_text_style_t* ts);
+SK_C_API void tl_text_style_set_background_paint(tl_text_style_t* ts, const sk_paint_t* cpaint);
+SK_C_API void tl_text_style_clear_background_color(tl_text_style_t* ts);
+SK_C_API void tl_text_style_get_decoration(const tl_text_style_t* ts, tl_decoration_t* result);
+SK_C_API tl_text_decoration_t tl_text_style_get_decoration_type(const tl_text_style_t* ts);
+SK_C_API tl_text_decoration_mode_t tl_text_style_get_decoration_mode(const tl_text_style_t* ts);
+SK_C_API sk_color_t tl_text_style_get_decoration_color(const tl_text_style_t* ts);
+SK_C_API tl_text_decoration_style_t tl_text_style_get_decoration_style(const tl_text_style_t* ts);
+SK_C_API float tl_text_style_get_decoration_thickness_multiplier(const tl_text_style_t* ts);
+SK_C_API sk_fontstyle_t* tl_text_style_get_font_style(const tl_text_style_t* ts);
+SK_C_API size_t tl_text_style_get_shadow_number(const tl_text_style_t* ts);
+SK_C_API size_t tl_text_style_get_font_feature_number(const tl_text_style_t* ts);
+SK_C_API float tl_text_style_get_font_size(const tl_text_style_t* ts);
+SK_C_API float tl_text_style_get_baseline_shift(const tl_text_style_t* ts);
+SK_C_API float tl_text_style_get_height(const tl_text_style_t* ts);
+SK_C_API bool tl_text_style_get_height_override(const tl_text_style_t* ts);
+SK_C_API bool tl_text_style_get_half_leading(const tl_text_style_t* ts);
+SK_C_API float tl_text_style_get_letter_spacing(const tl_text_style_t* ts);
+SK_C_API float tl_text_style_get_word_spacing(const tl_text_style_t* ts);
+SK_C_API sk_typeface_t* tl_text_style_get_typeface(const tl_text_style_t* ts);
+SK_C_API sk_string_t* tl_text_style_get_locale(const tl_text_style_t* ts);
+SK_C_API tl_text_baseline_t tl_text_style_get_text_baseline(const tl_text_style_t* ts);
+
+SK_C_API void tl_text_style_set_decoration_type(tl_text_style_t* ts, tl_text_decoration_t value);
+SK_C_API void tl_text_style_set_decoration_mode(tl_text_style_t* ts,
+                                                tl_text_decoration_mode_t value);
+SK_C_API void tl_text_style_set_decoration_color(tl_text_style_t* ts, sk_color_t value);
+SK_C_API void tl_text_style_set_decoration_style(tl_text_style_t* ts,
+                                                 tl_text_decoration_style_t value);
+SK_C_API void tl_text_style_set_decoration_thickness_multiplier(tl_text_style_t* ts, float value);
+SK_C_API void tl_text_style_set_font_style(tl_text_style_t* ts, const sk_fontstyle_t* value);
+SK_C_API void tl_text_style_set_shadow_number(tl_text_style_t* ts, size_t value);
+SK_C_API void tl_text_style_set_font_feature_number(tl_text_style_t* ts, size_t value);
+SK_C_API void tl_text_style_set_font_size(tl_text_style_t* ts, float value);
+SK_C_API void tl_text_style_set_baseline_shift(tl_text_style_t* ts, float value);
+SK_C_API void tl_text_style_set_height(tl_text_style_t* ts, float value);
+SK_C_API void tl_text_style_set_height_override(tl_text_style_t* ts, bool value);
+SK_C_API void tl_text_style_set_half_leading(tl_text_style_t* ts, bool value);
+SK_C_API void tl_text_style_set_letter_spacing(tl_text_style_t* ts, float value);
+SK_C_API void tl_text_style_set_word_spacing(tl_text_style_t* ts, float value);
+SK_C_API void tl_text_style_set_typeface(tl_text_style_t* ts, const sk_typeface_t* value);
+SK_C_API void tl_text_style_set_locale(tl_text_style_t* ts, const sk_string_t* value);
+SK_C_API void tl_text_style_set_text_baseline(tl_text_style_t* ts, tl_text_baseline_t value);
+
+SK_C_API void tl_text_style_reset_shadows(tl_text_style_t* ts);
+SK_C_API void tl_text_style_reset_font_features(tl_text_style_t* ts);
+
 // paragraph style
 SK_C_API tl_strut_style_t* tl_strut_style_new();
 SK_C_API void tl_strut_style_delete(tl_strut_style_t* strut_style);
@@ -110,6 +158,17 @@ SK_C_API void tl_font_collection_set_default_font_manager_with_family_name(
         const sk_fontmgr_t* cfontmgr,
         const char* default_family_name);
 SK_C_API sk_fontmgr_t* tl_font_collection_get_fallback_font_manager(const tl_font_collection_t*);
+SK_C_API size_t tl_font_collection_find_typefaces(tl_font_collection_t*,
+                                                  const tl_vec_of_sk_strings_t*,
+                                                  const sk_fontstyle_t*,
+                                                  sk_typeface_t** vec_typeface_or_null,
+                                                  size_t vec_len);
+SK_C_API size_t tl_font_collection_find_typefaces2(tl_font_collection_t*,
+                                                   const tl_vec_of_sk_strings_t*,
+                                                   const sk_fontstyle_t*,
+                                                   const tl_font_arguments_t* font_args_or_null,
+                                                   sk_typeface_t** vec_typeface_or_null,
+                                                   size_t vec_len);
 SK_C_API void tl_font_collection_disable_font_fallback(tl_font_collection_t* font_collection);
 SK_C_API void tl_font_collection_enable_font_fallback(tl_font_collection_t* font_collection);
 SK_C_API bool tl_font_collection_font_fallback_enabled(tl_font_collection_t* font_collection);
@@ -117,6 +176,7 @@ SK_C_API bool tl_font_collection_font_fallback_enabled(tl_font_collection_t* fon
 // paragraph builder
 SK_C_API tl_paragraph_builder_t* tl_paragraph_builder_new(
         const tl_paragraph_style_t* paragraph_style, const tl_font_collection_t* font_collection);
+SK_C_API void tl_paragraph_builder_delete(tl_paragraph_builder_t* builder);
 SK_C_API void tl_paragraph_builder_push_style(tl_paragraph_builder_t* paragraph_builder,
                                               const tl_text_style_t* text_style);
 SK_C_API void tl_paragraph_builder_pop(tl_paragraph_builder_t* paragraph_builder);
@@ -139,6 +199,7 @@ SK_C_API char* tl_paragraph_builder_get_text(tl_paragraph_builder_t* paragraph_b
 SK_C_API void tl_paragraph_builder_reset(tl_paragraph_builder_t* paragraph_builder);
 
 // paragraph
+SK_C_API void tl_paragraph_delete(tl_paragraph_t* paragraph);
 SK_C_API float tl_paragraph_get_max_width(tl_paragraph_t* paragraph);
 SK_C_API float tl_paragraph_get_height(tl_paragraph_t* paragraph);
 SK_C_API float tl_paragraph_get_min_intrinsic_width(tl_paragraph_t* paragraph);
@@ -149,6 +210,16 @@ SK_C_API float tl_paragraph_get_longest_line(tl_paragraph_t* paragraph);
 SK_C_API bool tl_paragraph_get_did_exceed_max_lines(tl_paragraph_t* paragraph);
 SK_C_API void tl_paragraph_layout(tl_paragraph_t* paragraph, float width);
 SK_C_API void tl_paragraph_paint(tl_paragraph_t* paragraph, sk_canvas_t* canvas, float x, float y);
+SK_C_API size_t tl_paragraph_get_rects_for_range(tl_paragraph_t* paragraph,
+                                                 uint32_t start,
+                                                 uint32_t end,
+                                                 tl_rect_height_style_t hstyle,
+                                                 tl_rect_width_style_t wstyle,
+                                                 tl_text_box_t* vec_text_box_or_null,
+                                                 size_t vec_len);
+SK_C_API size_t tl_paragraph_get_rects_for_placeholders(tl_paragraph_t* paragraph,
+                                                        tl_text_box_t* vec_text_box_or_null,
+                                                        size_t vec_len);
 SK_C_API void tl_paragraph_get_glyph_position_at_coordinate(tl_paragraph_t* paragraph,
                                                             float dx,
                                                             float dy,
@@ -176,15 +247,16 @@ SK_C_API void tl_paragraph_update_background_paint(tl_paragraph_t* paragraph,
 SK_C_API int tl_paragraph_get_path(tl_paragraph_t* paragraph, int line_number, sk_path_t* dest);
 SK_C_API sk_path_t* tl_paragraph_get_path_text_blob(sk_textblob_t* blob);
 SK_C_API bool tl_paragraph_contains_emoji(tl_paragraph_t* paragraph, sk_textblob_t* blob);
-SK_C_API bool tl_paragraph_contains_color_font_or_bitmap(tl_paragraph_t* paragraph, sk_textblob_t* blob);
+SK_C_API bool tl_paragraph_contains_color_font_or_bitmap(tl_paragraph_t* paragraph,
+                                                         sk_textblob_t* blob);
 
 // editing api
 SK_C_API int tl_paragraph_get_line_number_at(tl_paragraph_t* paragraph, size_t index);
-SK_C_API void tl_paragraph_get_actual_text_range(tl_paragraph_t* paragraph, int line_number, bool include_spaces, size_t* start, size_t* end);
-
-
-
-
+SK_C_API void tl_paragraph_get_actual_text_range(tl_paragraph_t* paragraph,
+                                                 int line_number,
+                                                 bool include_spaces,
+                                                 size_t* start,
+                                                 size_t* end);
 
 SK_C_PLUS_PLUS_END_GUARD
 

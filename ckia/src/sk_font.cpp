@@ -160,6 +160,25 @@ void sk_font_get_xpos(
     AsFont(font)->getXPos(glyphs, count, xpos, origin);
 }
 
+size_t sk_font_get_intercepts(const sk_font_t* font,
+                              const uint16_t glyphs[],
+                              int count,
+                              const sk_point_t* pos,
+                              float top,
+                              float bottom,
+                              const sk_paint_t* cpaint_or_null,
+                              float* result_or_null,
+                              size_t result_len) {
+    auto intercepts = AsFont(font)->getIntercepts(
+            glyphs, count, (const SkPoint*)pos, top, bottom, AsPaint(cpaint_or_null));
+    // if nullptr, return size so that they can allocate the buffer and retry
+    if (result_or_null == nullptr) {
+        return intercepts.size();
+    }
+    memcpy(result_or_null, intercepts.data(), result_len * sizeof(SkScalar));
+    return intercepts.size();
+}
+
 bool sk_font_get_path(const sk_font_t* font, uint16_t glyph, sk_path_t* path) {
     return AsFont(font)->getPath(glyph, AsPath(path));
 }
