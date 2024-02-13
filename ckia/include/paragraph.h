@@ -60,8 +60,6 @@ SK_C_API void tl_text_style_set_decoration_style(tl_text_style_t* ts,
                                                  tl_text_decoration_style_t value);
 SK_C_API void tl_text_style_set_decoration_thickness_multiplier(tl_text_style_t* ts, float value);
 SK_C_API void tl_text_style_set_font_style(tl_text_style_t* ts, const sk_fontstyle_t* value);
-SK_C_API void tl_text_style_set_shadow_number(tl_text_style_t* ts, size_t value);
-SK_C_API void tl_text_style_set_font_feature_number(tl_text_style_t* ts, size_t value);
 SK_C_API void tl_text_style_set_font_size(tl_text_style_t* ts, float value);
 SK_C_API void tl_text_style_set_baseline_shift(tl_text_style_t* ts, float value);
 SK_C_API void tl_text_style_set_height(tl_text_style_t* ts, float value);

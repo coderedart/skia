@@ -9,7 +9,7 @@
 
 #include "include/core/SkDocument.h"
 #include "include/docs/SkPDFDocument.h"
-#include "include/docs/SkXPSDocument.h"
+// #include "include/docs/SkXPSDocument.h"
 
 #include "ckia/include/sk_document.h"
 

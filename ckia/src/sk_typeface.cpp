@@ -7,14 +7,14 @@
  * found in the LICENSE file.
  */
 
+#include <memory>
 #include "include/core/SkFontMgr.h"
 #include "include/core/SkFontStyle.h"
-#include "include/core/SkTypeface.h"
 #include "include/core/SkStream.h"
-#include "include/ports/SkFontMgr_directory.h"
+#include "include/core/SkTypeface.h"
 #include "include/ports/SkFontMgr_data.h"
+#include "include/ports/SkFontMgr_directory.h"
 #include "third_party/icu/SkLoadICU.h"
-#include <memory>
 
 #include "ckia/include/sk_typeface.h"
 
@@ -22,9 +22,7 @@
 
 // typeface
 
-void sk_typeface_unref(sk_typeface_t* typeface) {
-    SkSafeUnref(AsTypeface(typeface));
-}
+void sk_typeface_unref(sk_typeface_t* typeface) { SkSafeUnref(AsTypeface(typeface)); }
 
 sk_fontstyle_t* sk_typeface_get_fontstyle(const sk_typeface_t* typeface) {
     SkFontStyle fs = AsTypeface(typeface)->fontStyle();
@@ -40,14 +38,17 @@ int sk_typeface_get_font_width(const sk_typeface_t* typeface) {
 }
 
 sk_font_style_slant_t sk_typeface_get_font_slant(const sk_typeface_t* typeface) {
-    return(sk_font_style_slant_t)AsTypeface(typeface)->fontStyle().slant();
+    return (sk_font_style_slant_t)AsTypeface(typeface)->fontStyle().slant();
 }
 
 bool sk_typeface_is_fixed_pitch(const sk_typeface_t* typeface) {
     return AsTypeface(typeface)->isFixedPitch();
 }
 
-void sk_typeface_unichars_to_glyphs(const sk_typeface_t* typeface, const int32_t unichars[], int count, uint16_t glyphs[]) {
+void sk_typeface_unichars_to_glyphs(const sk_typeface_t* typeface,
+                                    const int32_t unichars[],
+                                    int count,
+                                    uint16_t glyphs[]) {
     AsTypeface(typeface)->unicharsToGlyphs(unichars, count, glyphs);
 }
 
@@ -71,7 +72,11 @@ size_t sk_typeface_get_table_size(const sk_typeface_t* typeface, sk_font_table_t
     return AsTypeface(typeface)->getTableSize(tag);
 }
 
-size_t sk_typeface_get_table_data(const sk_typeface_t* typeface, sk_font_table_tag_t tag, size_t offset, size_t length, void* data) {
+size_t sk_typeface_get_table_data(const sk_typeface_t* typeface,
+                                  sk_font_table_tag_t tag,
+                                  size_t offset,
+                                  size_t length,
+                                  void* data) {
     return AsTypeface(typeface)->getTableData(tag, offset, length, data);
 }
 
@@ -83,7 +88,10 @@ int sk_typeface_get_units_per_em(const sk_typeface_t* typeface) {
     return AsTypeface(typeface)->getUnitsPerEm();
 }
 
-bool sk_typeface_get_kerning_pair_adjustments(const sk_typeface_t* typeface, const uint16_t glyphs[], int count, int32_t adjustments[]) {
+bool sk_typeface_get_kerning_pair_adjustments(const sk_typeface_t* typeface,
+                                              const uint16_t glyphs[],
+                                              int count,
+                                              int32_t adjustments[]) {
     return AsTypeface(typeface)->getKerningPairAdjustments(glyphs, count, adjustments);
 }
 
@@ -97,28 +105,24 @@ sk_stream_asset_t* sk_typeface_open_stream(const sk_typeface_t* typeface, int* t
     return ToStreamAsset(AsTypeface(typeface)->openStream(ttcIndex).release());
 }
 
-
 // font manager
 
-sk_fontmgr_t* sk_fontmgr_create_custom_dir(const char * dir) {
+sk_fontmgr_t* sk_fontmgr_create_custom_dir(const char* dir) {
     return ToFontMgr(SkFontMgr_New_Custom_Directory(dir).release());
 }
-// datas: pointer to a slice of sk_sp<SkData>(sk_sp is itself a pointer ofc). i.e. a slice of SkDatas
-sk_fontmgr_t* sk_fontmgr_create_custom_data(sk_data_t** datas, size_t datas_count) {
-    return ToFontMgr(SkFontMgr_New_Custom_Data(SkSpan(reinterpret_cast<sk_sp<SkData>*>(datas), datas_count)).release());
+// datas: pointer to a slice of sk_sp<SkData>(sk_sp is itself a pointer ofc). i.e. a slice of
+// SkDatas
+sk_fontmgr_t* sk_fontmgr_create_custom_data(const sk_data_t** datas, size_t datas_count) {
+    return ToFontMgr(
+            SkFontMgr_New_Custom_Data(SkSpan(reinterpret_cast<sk_sp<SkData>*>(datas), datas_count))
+                    .release());
 }
 
-sk_fontmgr_t* sk_fontmgr_ref_empty() {
-    return ToFontMgr(SkFontMgr::RefEmpty().release());
-}
+sk_fontmgr_t* sk_fontmgr_ref_empty() { return ToFontMgr(SkFontMgr::RefEmpty().release()); }
 
-void sk_fontmgr_unref(sk_fontmgr_t* fontmgr) {
-    AsFontMgr(fontmgr)->unref();
-}
+void sk_fontmgr_unref(sk_fontmgr_t* fontmgr) { AsFontMgr(fontmgr)->unref(); }
 
-int sk_fontmgr_count_families(sk_fontmgr_t* fontmgr) {
-    return AsFontMgr(fontmgr)->countFamilies();
-}
+int sk_fontmgr_count_families(sk_fontmgr_t* fontmgr) { return AsFontMgr(fontmgr)->countFamilies(); }
 
 void sk_fontmgr_get_family_name(sk_fontmgr_t* fontmgr, int index, sk_string_t* familyName) {
     AsFontMgr(fontmgr)->getFamilyName(index, AsString(familyName));
@@ -132,19 +136,32 @@ sk_fontstyleset_t* sk_fontmgr_match_family(sk_fontmgr_t* fontmgr, const char* fa
     return ToFontStyleSet(AsFontMgr(fontmgr)->matchFamily(familyName).release());
 }
 
-sk_typeface_t* sk_fontmgr_match_family_style(sk_fontmgr_t* fontmgr, const char* familyName, sk_fontstyle_t* style) {
-    return ToTypeface(AsFontMgr(fontmgr)->matchFamilyStyle(familyName, *AsFontStyle(style)).release());
+sk_typeface_t* sk_fontmgr_match_family_style(sk_fontmgr_t* fontmgr,
+                                             const char* familyName,
+                                             sk_fontstyle_t* style) {
+    return ToTypeface(
+            AsFontMgr(fontmgr)->matchFamilyStyle(familyName, *AsFontStyle(style)).release());
 }
 
-sk_typeface_t* sk_fontmgr_match_family_style_character(sk_fontmgr_t* fontmgr, const char* familyName, sk_fontstyle_t* style, const char** bcp47, int bcp47Count, int32_t character) {
-    return ToTypeface(AsFontMgr(fontmgr)->matchFamilyStyleCharacter(familyName, *AsFontStyle(style), bcp47, bcp47Count, character).release());
+sk_typeface_t* sk_fontmgr_match_family_style_character(sk_fontmgr_t* fontmgr,
+                                                       const char* familyName,
+                                                       sk_fontstyle_t* style,
+                                                       const char** bcp47,
+                                                       int bcp47Count,
+                                                       int32_t character) {
+    return ToTypeface(AsFontMgr(fontmgr)
+                              ->matchFamilyStyleCharacter(
+                                      familyName, *AsFontStyle(style), bcp47, bcp47Count, character)
+                              .release());
 }
 
 sk_typeface_t* sk_fontmgr_create_from_data(sk_fontmgr_t* fontmgr, sk_data_t* data, int index) {
     return ToTypeface(AsFontMgr(fontmgr)->makeFromData(sk_ref_sp(AsData(data)), index).release());
 }
 
-sk_typeface_t* sk_fontmgr_create_from_stream(sk_fontmgr_t* fontmgr, sk_stream_asset_t* stream, int index) {
+sk_typeface_t* sk_fontmgr_create_from_stream(sk_fontmgr_t* fontmgr,
+                                             sk_stream_asset_t* stream,
+                                             int index) {
     std::unique_ptr<SkStreamAsset> skstream(AsStreamAsset(stream));
     return ToTypeface(AsFontMgr(fontmgr)->makeFromStream(std::move(skstream), index).release());
 }
@@ -153,33 +170,28 @@ sk_typeface_t* sk_fontmgr_create_from_file(sk_fontmgr_t* fontmgr, const char* pa
     return ToTypeface(AsFontMgr(fontmgr)->makeFromFile(path, index).release());
 }
 
-sk_typeface_t* sk_fontmgr_typeface_create_from_name(sk_fontmgr_t* fontmgr, const char* family_name, const sk_fontstyle_t* fs) {
-    return ToTypeface(AsFontMgr(fontmgr)->legacyMakeTypeface(family_name, *AsFontStyle(fs)).release());
+sk_typeface_t* sk_fontmgr_typeface_create_from_name(sk_fontmgr_t* fontmgr,
+                                                    const char* family_name,
+                                                    const sk_fontstyle_t* fs) {
+    return ToTypeface(
+            AsFontMgr(fontmgr)->legacyMakeTypeface(family_name, *AsFontStyle(fs)).release());
 }
-
 
 // font style
 
 sk_fontstyle_t* sk_fontstyle_new(int weight, int width, sk_font_style_slant_t slant) {
-    return ToFontStyle(new SkFontStyle(weight, width,(SkFontStyle::Slant)slant));
+    return ToFontStyle(new SkFontStyle(weight, width, (SkFontStyle::Slant)slant));
 }
 
-void sk_fontstyle_delete(sk_fontstyle_t* fs) {
-    delete AsFontStyle(fs);
-}
+void sk_fontstyle_delete(sk_fontstyle_t* fs) { delete AsFontStyle(fs); }
 
-int sk_fontstyle_get_weight(const sk_fontstyle_t* fs) {
-    return AsFontStyle(fs)->weight();
-}
+int sk_fontstyle_get_weight(const sk_fontstyle_t* fs) { return AsFontStyle(fs)->weight(); }
 
-int sk_fontstyle_get_width(const sk_fontstyle_t* fs) {
-    return AsFontStyle(fs)->width();
-}
+int sk_fontstyle_get_width(const sk_fontstyle_t* fs) { return AsFontStyle(fs)->width(); }
 
 sk_font_style_slant_t sk_fontstyle_get_slant(const sk_fontstyle_t* fs) {
     return (sk_font_style_slant_t)AsFontStyle(fs)->slant();
 }
-
 
 // font style set
 
@@ -187,15 +199,14 @@ sk_fontstyleset_t* sk_fontstyleset_create_empty(void) {
     return ToFontStyleSet(SkFontStyleSet::CreateEmpty().release());
 }
 
-void sk_fontstyleset_unref(sk_fontstyleset_t* fss) {
-    AsFontStyleSet(fss)->unref();
-}
+void sk_fontstyleset_unref(sk_fontstyleset_t* fss) { AsFontStyleSet(fss)->unref(); }
 
-int sk_fontstyleset_get_count(sk_fontstyleset_t* fss) {
-    return AsFontStyleSet(fss)->count();
-}
+int sk_fontstyleset_get_count(sk_fontstyleset_t* fss) { return AsFontStyleSet(fss)->count(); }
 
-void sk_fontstyleset_get_style(sk_fontstyleset_t* fss, int index, sk_fontstyle_t* fs, sk_string_t* style) {
+void sk_fontstyleset_get_style(sk_fontstyleset_t* fss,
+                               int index,
+                               sk_fontstyle_t* fs,
+                               sk_string_t* style) {
     return AsFontStyleSet(fss)->getStyle(index, AsFontStyle(fs), AsString(style));
 }
 
@@ -207,6 +218,4 @@ sk_typeface_t* sk_fontstyleset_match_style(sk_fontstyleset_t* fss, sk_fontstyle_
     return ToTypeface(AsFontStyleSet(fss)->matchStyle(*AsFontStyle(style)).release());
 }
 
-bool sk_icu_set_icudtl_dat(void* icudtl_dat) {
-    return SkLoadICUMemory(icudtl_dat);
-}
+bool sk_icu_set_icudtl_dat(void* icudtl_dat) { return SkLoadICUMemory(icudtl_dat); }

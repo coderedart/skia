@@ -33,5 +33,3 @@
 #include "ckia/include/sk_vertices.h"
 #include "ckia/include/skottie_animation.h"
 #include "ckia/include/sksg_invalidation_controller.h"
-
-SK_C_API int check_skiac() { return 3; }

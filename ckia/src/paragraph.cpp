@@ -455,7 +455,7 @@ bool tl_font_collection_font_fallback_enabled(tl_font_collection_t* font_collect
 
 // paragraph builder
 tl_paragraph_builder_t* tl_paragraph_builder_new(const tl_paragraph_style_t* paragraph_style,
-                                                 tl_font_collection_t* font_collection) {
+                                                 const tl_font_collection_t* font_collection) {
     return ToTlParagraphBuilder(
             skia::textlayout::ParagraphBuilder::make(*AsTlParagraphStyle(paragraph_style),
                                                      sk_ref_sp(AsTlFontCollection(font_collection)))
