@@ -126,8 +126,16 @@ bool sk_canvas_get_device_clip_bounds(sk_canvas_t* ccanvas, sk_irect_t* cbounds)
 
 int sk_canvas_save(sk_canvas_t* ccanvas) { return AsCanvas(ccanvas)->save(); }
 
-int sk_canvas_save_layer(sk_canvas_t* ccanvas, const sk_rect_t* crect, const sk_paint_t* cpaint) {
-    return AsCanvas(ccanvas)->saveLayer(AsRect(crect), AsPaint(cpaint));
+int sk_canvas_save_layer(sk_canvas_t* ccanvas,
+                         const sk_rect_t* crect,
+                         const sk_paint_t* cpaint,
+                         const sk_imagefilter_t* backdrop,
+                         uint32_t save_layer_flags) {
+    return AsCanvas(ccanvas)->saveLayer(
+            SkCanvas::SaveLayerRec(AsRect(crect),
+                                   AsPaint(cpaint),
+                                   AsImageFilter(backdrop),
+                                   (SkCanvas::SaveLayerFlags)save_layer_flags));
 }
 
 void sk_canvas_restore(sk_canvas_t* ccanvas) { AsCanvas(ccanvas)->restore(); }
